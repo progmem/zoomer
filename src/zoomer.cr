@@ -109,7 +109,7 @@ module Zoomer
   samples.each do |sample|
     filebase = Path[in_file.to_s].basename
     filename = "output/%s_%s.wav" % [filebase, sample.tag]
-    puts "Saving sample %s" % filename
+    Log.info { "Saving sample %s" % filename }
     sample.to_wav filename
   end
 end
