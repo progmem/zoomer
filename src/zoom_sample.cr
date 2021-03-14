@@ -33,10 +33,10 @@ class ZoomSample
       samples << ((packed_sample >> 24) & 0x7f).to_i16
 
       # Reconstruct the fourth sample
-      samples <<  (packed_sample & 0x0f).to_i16
-               + ((packed_sample & 0x80000000) >> 27)
-               + ((packed_sample & 0x800000  ) >> 18)
-               + ((packed_sample & 0x800000  ) >>  9)
+      samples << ((packed_sample & 0x0f      ).to_i16 +
+                 ((packed_sample & 0x80000000) >> 27) +
+                 ((packed_sample & 0x800000  ) >> 18) +
+                 ((packed_sample & 0x8000    ) >>  9))
 
       # Extract the scaling factor and recalculate the samples.
       scale = (packed_sample & 0xf0) >> 4
