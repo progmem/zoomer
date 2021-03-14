@@ -1,0 +1,13 @@
+name: zoomer
+version: 0.1.0
+
+authors:
+  - Jason DeLeon <jason@progmem.space>
+
+targets:
+  zoomer:
+    main: src/zoomer.cr
+
+crystal: 0.36.1
+
+license: MIT
