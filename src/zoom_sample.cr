@@ -62,7 +62,7 @@ class ZoomSample
     # Chunk ID
     f.printf "RIFF"
     # Chunk Size
-    f.write_bytes UInt32.new(36 + size_in_bytes), IO::ByteFormat::LittleEndian
+    f.write_bytes UInt32.new(36 + size_in_bytes + 68), IO::ByteFormat::LittleEndian
     # Format
     f.printf "WAVE"
 
@@ -83,13 +83,52 @@ class ZoomSample
     # Block Align
     f.write_bytes UInt16.new(16),     IO::ByteFormat::LittleEndian
 
-
     ## data Subchunk
     f.printf "data"
     # Subchunk Size
     f.write_bytes UInt32.new(size_in_bytes), IO::ByteFormat::LittleEndian
     # Subchunk Data
     write_raw_pcm f
+
+    ## smpl Subchunk (loop data)
+    f.printf "smpl"
+    # Subchunk Size
+    f.write_bytes UInt32.new(60),   IO::ByteFormat::LittleEndian
+    # Manufacturer
+    f.write_bytes UInt32.new(0),    IO::ByteFormat::LittleEndian
+    # Product
+    f.write_bytes UInt32.new(0),    IO::ByteFormat::LittleEndian
+    # Sample Period, in nanoseconds, approx. 1/sample_rate
+    f.write_bytes UInt32.new(30720),IO::ByteFormat::LittleEndian
+    # MIDI Unity Note
+    # TODO: I'm using what was provided in a sample file, what's a good way of determining this?
+    f.write_bytes UInt32.new(60),   IO::ByteFormat::LittleEndian
+    # MIDI Pitch Fraction
+    f.write_bytes UInt32.new(0),    IO::ByteFormat::LittleEndian
+    # SMPTE Format
+    f.write_bytes UInt32.new(0),    IO::ByteFormat::LittleEndian
+    # SMPTE Offset
+    f.write_bytes UInt32.new(0),    IO::ByteFormat::LittleEndian
+    # Number of Sample Loops
+    f.write_bytes UInt32.new(1),    IO::ByteFormat::LittleEndian
+    # Sampler Data
+    f.write_bytes UInt32.new(0),    IO::ByteFormat::LittleEndian
+    ## Sample Loop Data
+    # Cue Point ID
+    f.write_bytes UInt32.new(0),    IO::ByteFormat::LittleEndian
+    # Type
+    # TODO: Using "loop forward" here by default
+    #       Other options are "ping-pong" (1) and "loop backwards" (2)
+    #       Is some of this looping info part of the flags used in the header?
+    f.write_bytes UInt32.new(0),                IO::ByteFormat::LittleEndian
+    # Start
+    f.write_bytes UInt32.new(@loop_pos),        IO::ByteFormat::LittleEndian
+    # End
+    f.write_bytes UInt32.new(@samples.size - 1),IO::ByteFormat::LittleEndian
+    # Fraction
+    f.write_bytes UInt32.new(0),                IO::ByteFormat::LittleEndian
+    # PlayCount
+    f.write_bytes UInt32.new(0),                IO::ByteFormat::LittleEndian
 
     f.close
   end
