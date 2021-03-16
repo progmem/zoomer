@@ -53,6 +53,13 @@ module Zoomer
 
       # Separate out our four bytes so we can better work with them
       pos_start, pos_end, pos_loop, flags = data
+
+      # If our position start is -1, the page is empty
+      if pos_start == -1
+        Log.warn { "Page %d contains no samples, skipping" % [page_idx] }
+        return samples
+      end
+
       # Our loop position can be converted from addess to sample
       pos_loop -= pos_start
       # Our end position indicates the last address to be read
